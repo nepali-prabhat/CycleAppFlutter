@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import '../Model/userLocationModel.dart';
-
+import '../Model/userIdModel.dart';
 class NearbyUsers extends StatelessWidget {
   final Function getNearbyUsers;
-  NearbyUsers({@required this.getNearbyUsers});
+  final int userId;
+  final ULocation currentLocation;
+  NearbyUsers({@required this.getNearbyUsers, @required this.userId, @required this.currentLocation});
 
   Widget _buildUsersList(List<LocationGet>locationGet){
       return SizedBox(
@@ -24,7 +26,7 @@ class NearbyUsers extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: getNearbyUsers(),
+      future: getNearbyUsers(userId,currentLocation),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if(snapshot.connectionState == ConnectionState.done){
             if(snapshot.hasError){

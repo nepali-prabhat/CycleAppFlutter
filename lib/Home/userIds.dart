@@ -1,12 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-class Uid {
-  int id;
-  Uid({@required this.id});
-}
-
-String base_url = 'http://192.168.1.70:3000';
+import '../Model/userIdModel.dart';
+import '../Service/userIdService.dart';
 
 class UsersIds extends StatelessWidget {
   final int currentId;
@@ -14,19 +8,6 @@ class UsersIds extends StatelessWidget {
 
   UsersIds({this.currentId, this.setId});
   
-  Future<List<Uid>> _getUserIds() async {
-    var url = base_url + '/users/allId';
-    var response = await http.get(url);
-    var userIdsJson = json.decode(response.body);
-    List<Uid> userIds = [];
-    for (var userId in userIdsJson) {
-      Uid u = Uid(id: userId['id']);
-      userIds.add(u);
-    }
-    return userIds;
-  }
-
-
   Widget _buildSelectable(Uid uid) {
     return Container(
       height: 60,
@@ -52,7 +33,7 @@ class UsersIds extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: FutureBuilder(
-          future: _getUserIds(),
+          future: getUserIds(),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
                 if(snapshot.hasError){

@@ -1,18 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:async';
 import 'package:location/location.dart';
-import '../Model/userLocationModel.dart';
 import './nearbyUsers.dart';
 import '../StaticWidgets/sectionRuler.dart';
-
-String base_url = 'http://192.168.1.70:3000';
-
-class ULocation {
-  double long;
-  double lat;
-  ULocation({@required this.long, @required this.lat});
-}
+import '../Model/userIdModel.dart';
+import '../Service/userLocationService.dart';
 
 class UserLocation extends StatefulWidget {
   final int userId;
@@ -39,34 +30,6 @@ class _UserLocationState extends State<UserLocation> {
                 currentLocation = newLocation;
             });
     });
-  }
-
-  Future<http.Response> postUserLocation() async {
-    var url = base_url + '/locations/${widget.userId}';
-    var body = {
-      'long': currentLocation.long.toString(),
-      'lat': currentLocation.lat.toString()
-    };
-    final response = await http.post(url, body: body);
-    return response;
-  }
-
-  Future<List<LocationGet>> getNearbyUsers() async {
-    var url = base_url+'/locations/nearby/' + '${widget.userId}';
-    var urlWithQuery =
-        _makeQueryURL(url, {'long': currentLocation.long, 'lat': currentLocation.lat});
-    final response = await http.get(urlWithQuery);
-    List<LocationGet> nearbyUsers = locationGetFromJson(response.body);
-    return nearbyUsers;
-  }
-
-  String _makeQueryURL(String url, Map<String,dynamic> queryParams){
-    String returnURL = url+"?";
-    for(var paramKey in queryParams.keys){
-        returnURL = '${returnURL + paramKey}=${queryParams[paramKey]}&';
-    }
-    returnURL=returnURL.substring(0,returnURL.length-1);
-    return returnURL;
   }
 
   @override
@@ -103,11 +66,10 @@ class _UserLocationState extends State<UserLocation> {
         SizedBox(height: 25),
         shouldPost && currentLocation != null
             ? FutureBuilder(
-                future: postUserLocation(),
+                future: postUserLocation(widget.userId,currentLocation),
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
                     if (snapshot.hasError) {
-                      print(snapshot.error);
                       return Text('Error in posting cyclist location to database',
                           style: TextStyle(
                               color: Colors.white,
@@ -155,7 +117,7 @@ class _UserLocationState extends State<UserLocation> {
             : Text('cannot get your device location.'),
         SizedBox(height:25),
         shouldGetNearbyUsers?
-            NearbyUsers(getNearbyUsers: getNearbyUsers)
+            NearbyUsers(getNearbyUsers: getNearbyUsers, userId: widget.userId, currentLocation:currentLocation)
             :
             Text(""),
       ]),
