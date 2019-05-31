@@ -1,25 +1,34 @@
-import 'package:cycle_app/Model/userIdModel.dart';
+import 'package:cycle_app/Model/NearbyUsers.dart';
+import 'package:cycle_app/Model/longLat.dart';
+import 'package:cycle_app/Service/userService.dart';
+import 'package:cycle_app/main.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
-import '../Model/userLocationModel.dart';
+
 import '../globals.dart';
 
-  Future<http.Response> postUserLocation(int userId,ULocation currentLocation) async {
-    var url = base_url + '/locations/$userId';
+  Future<http.Response> postUserLocation(int userId,LongLat currentLocation) async {
+
+      UserService userService = getIt.get<UserService>();
+    var url = base_url + '/locations';
+
     var body = {
       'long': currentLocation.long.toString(),
       'lat': currentLocation.lat.toString()
     };
-    final response = await http.post(url, body: body);
+    final response = await http.post(url, body: body,headers: {"Authorization":"Bearer "+userService.tokenValue});
+    //print(response.body);
     return response;
   }
 
-  Future<List<LocationGet>> getNearbyUsers( int userId, ULocation currentLocation) async {
-    var url = base_url+'/locations/nearby/' + '$userId';
+  Future<List<NearbyUsers>> getNearbyUsers( int userId, LongLat currentLocation) async {
+    var url = base_url+'/locations/nearby';
+      UserService userService = getIt.get<UserService>();
     var urlWithQuery =
         _makeQueryURL(url, {'long': currentLocation.long, 'lat': currentLocation.lat});
-    final response = await http.get(urlWithQuery);
-    List<LocationGet> nearbyUsers = locationGetFromJson(response.body);
+    final response = await http.get(urlWithQuery,headers: {"Authorization":"Bearer "+userService.tokenValue});
+    List<NearbyUsers> nearbyUsers = nearbyUsersFromJson(response.body);
+    print(response.body);
     return nearbyUsers;
   }
 

@@ -1,21 +1,21 @@
+import 'package:cycle_app/Model/NearbyUsers.dart';
+import 'package:cycle_app/Model/longLat.dart';
 import 'package:flutter/material.dart';
-import '../Model/userLocationModel.dart';
-import '../Model/userIdModel.dart';
-class NearbyUsers extends StatelessWidget {
+class NearbyUsersList extends StatelessWidget {
   final Function getNearbyUsers;
   final int userId;
-  final ULocation currentLocation;
-  NearbyUsers({@required this.getNearbyUsers, @required this.userId, @required this.currentLocation});
+  final LongLat currentLocation;
+  NearbyUsersList({@required this.getNearbyUsers, @required this.userId, @required this.currentLocation});
 
-  Widget _buildUsersList(List<LocationGet>locationGet){
+  Widget _buildUsersList(List<NearbyUsers>locationGet){
       return SizedBox(
         height: 200,
         child: ListView.builder(
             itemCount: locationGet.length,
             itemBuilder: (BuildContext context, int i) {
                 return ListTile(
-                    leading: CircleAvatar(backgroundColor: Colors.cyan,child:Text(locationGet[i].user.fName[0].toUpperCase(), style: TextStyle(color:Colors.black38))),
-                    title: Text(locationGet[i].user.fName+' '+locationGet[i].user.lName, style: TextStyle(color:Colors.white)),
+                    leading: CircleAvatar(backgroundColor: Colors.cyan,child:Text(locationGet[i].user.username[0].toUpperCase(), style: TextStyle(color:Colors.black38))),
+                    title: Text(locationGet[i].user.username, style: TextStyle(color:Colors.white)),
                     subtitle: Text("long:" + locationGet[i].long.toString() +" , lat:"+ locationGet[i].lat.toString(),style: TextStyle(color:Colors.white)),
                 );
             },
@@ -36,7 +36,7 @@ class NearbyUsers extends StatelessWidget {
                         fontSize: 20,
                         fontFamily: 'Ubuntu'));
             }
-            List<LocationGet>data = snapshot.data;
+            List<NearbyUsers>data = snapshot.data;
             if(data.length ==0){
               return Text('No nearby Cyclists',
                         style: TextStyle(

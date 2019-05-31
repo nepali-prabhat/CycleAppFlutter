@@ -80,23 +80,35 @@ class _MainFormState extends State<MainForm> {
   // Future<Data> data;
   bool sendPostRequest = false;
   bool success = false;
+  
+  final String signUpURL = '$base_url/signup';
 
-  Future<Map<String, dynamic>> createPost(String url, {Map body}) async {
-    var response = await http.post(url, body: body);
+  TextEditingController username = new TextEditingController();
+  TextEditingController fName = new TextEditingController();
+  TextEditingController lName = new TextEditingController();
+  TextEditingController email = new TextEditingController();
+  TextEditingController password = new TextEditingController();
+  TextEditingController phone = new TextEditingController();
+  TextEditingController address = new TextEditingController();
+
+  Future<Map<String, dynamic>> createPost() async {
+    var response = await http.post(signUpURL, body: {
+        "username": username.text,
+        "f_name": fName.text,
+        "l_name": lName.text,
+        "email": email.text,
+        "password": password.text,
+        "phone_no": phone.text,
+        "address": address.text,
+        "permission":'0',
+        "bio":"my name is jeff."
+        });
     var jsonData = json.decode(response.body);
-    print(response.statusCode);
-
     return jsonData;
   }
 
   _MainFormState({Key key});
   
-  static final Url = '${base_url}/signup';
-  TextEditingController username = new TextEditingController();
-  TextEditingController email = new TextEditingController();
-  TextEditingController password = new TextEditingController();
-  TextEditingController phone = new TextEditingController();
-  TextEditingController address = new TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -116,8 +128,7 @@ class _MainFormState extends State<MainForm> {
                     children: <Widget>[
                       new TextFormField(
                           autofocus: false,
-                          keyboardType: TextInputType
-                              .emailAddress, // Use email input type for emails.
+                          keyboardType: TextInputType.emailAddress, // Use email input type for emails.
                           controller: email,
                           validator: (val) =>
                               !val.contains('@') ? 'Not a valid email' : null,
@@ -132,8 +143,7 @@ class _MainFormState extends State<MainForm> {
                       ),
                       new TextFormField(
                           autofocus: false,
-                          keyboardType: TextInputType
-                              .text, // Use email input type for emails.
+                          keyboardType: TextInputType.text, // Use email input type for emails.
                           controller: username,
                           validator: (val) => val.length < 6
                               ? 'Atleast six character required'
@@ -149,8 +159,39 @@ class _MainFormState extends State<MainForm> {
                       ),
                       new TextFormField(
                           autofocus: false,
-                          keyboardType: TextInputType
-                              .phone, // Use email input type for emails.
+                          keyboardType: TextInputType.text, // Use email input type for emails.
+                          controller: fName,
+                          validator: (val) => val.length < 6
+                              ? 'Atleast six character required'
+                              : null,
+                          decoration: new InputDecoration(
+                            icon: Icon(Icons.person_pin_circle),
+                            labelText: "First Name",
+                            contentPadding: EdgeInsets.all(10.0),
+                            hintText: 'Karun',
+                          )),
+                      SizedBox(
+                        height: 30,
+                      ),
+                      new TextFormField(
+                          autofocus: false,
+                          keyboardType: TextInputType.text, // Use email input type for emails.
+                          controller: lName,
+                          validator: (val) => val.length < 6
+                              ? 'Atleast six character required'
+                              : null,
+                          decoration: new InputDecoration(
+                            icon: Icon(Icons.person_pin_circle),
+                            labelText: "Last Name",
+                            contentPadding: EdgeInsets.all(10.0),
+                            hintText: 'Pandey',
+                          )),
+                      SizedBox(
+                        height: 30,
+                      ),
+                      new TextFormField(
+                          autofocus: false,
+                          keyboardType: TextInputType.phone, // Use email input type for emails.
                           controller: phone,
                           validator: (val) => val.length == 10
                               ? null
@@ -166,8 +207,7 @@ class _MainFormState extends State<MainForm> {
                       ),
                       new TextFormField(
                           autofocus: false,
-                          keyboardType: TextInputType
-                              .text, // Use email input type for emails.
+                          keyboardType: TextInputType.text, // Use email input type for emails.
                           controller: password,
                           validator: (val) => val.length < 6
                               ? 'Atleast six character required'
@@ -184,8 +224,7 @@ class _MainFormState extends State<MainForm> {
                       ),
                       new TextFormField(
                           autofocus: false,
-                          keyboardType: TextInputType
-                              .text, // Use email input type for emails.
+                          keyboardType: TextInputType.text, // Use email input type for emails.
                           controller: address,
                           decoration: new InputDecoration(
                             icon: Icon(Icons.home),
@@ -230,14 +269,7 @@ class _MainFormState extends State<MainForm> {
                       ),
                       sendPostRequest
                           ? FutureBuilder(
-                              future: createPost(Url,
-                                  body: new Data(
-                                          username: username.text,
-                                          email: email.text,
-                                          password: password.text,
-                                          phone_no: phone.text,
-                                          address: address.text)
-                                      .toMap()),
+                              future: createPost(),
                               builder: (BuildContext context,
                                   AsyncSnapshot snapshot) {
                                 if (snapshot.connectionState ==
@@ -249,17 +281,15 @@ class _MainFormState extends State<MainForm> {
                                   if (snapshot.hasError) {
                                     return Text("Something went Wrong");
                                   } else if (snapshot.hasData) {
-                                    print(snapshot.data);
                                     var response = snapshot.data;
-                                    String key;
-                                    for (var key in response.keys) {
-                                      key = key;
-                                      print(key);
+                                    //returns {mssg: Registration successfull} if successful 
+                                    //popping page if this comes
+                                    //note: not a good method to check
+                                    if(response.containsValue("Registration successfull")){
+                                        Navigator.of(context).pop();
                                     }
-
                                     for (var value in response.values) {
                                       int l = response.length;
-
                                       return Container(
                                         padding: EdgeInsets.symmetric(
                                             vertical: 15, horizontal: 15),
@@ -293,45 +323,6 @@ class _MainFormState extends State<MainForm> {
                       SizedBox(
                         height: 25,
                       ),
-                      Text(
-                        "Or",
-                        style: TextStyle(
-                            fontSize: 25,
-                            color: Colors.grey,
-                            fontFamily: 'Roboto-Light.ttf'),
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Text(
-                        "Sign In With",
-                        style: TextStyle(
-                            fontSize: 25,
-                            color: Colors.grey,
-                            fontFamily: 'Roboto-Light.ttf'),
-                      ),
-                      SizedBox(
-                        height: 25,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          CircleAvatar(
-                            maxRadius: 25,
-                            child: Image.asset(
-                              'assets/images/fb.png',
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          CircleAvatar(
-                            maxRadius: 25,
-                            child: Image.asset(
-                              'assets/images/google.png',
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ],
-                      )
                     ],
                   ),
                 ),

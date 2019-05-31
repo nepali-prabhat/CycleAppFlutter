@@ -230,17 +230,15 @@ class _NewLoginState extends State<NewLogin> {
       floatingActionButton: FloatingActionButton(
         tooltip: "Register here",
         onPressed: () {
-          setState(() {
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => Registration()));
-          });
         },
         backgroundColor: Colors.red,
         child: IconButton(
           icon: Icon(
             Icons.recent_actors,
-            color: Colors.white,
-          ), onPressed: () {},
+            color: Colors.white, 
+          ),
         ),
       )
     );

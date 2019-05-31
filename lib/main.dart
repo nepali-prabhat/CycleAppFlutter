@@ -1,5 +1,6 @@
 import 'package:cycle_app/Home/home.dart';
 import 'package:cycle_app/Home/pages/newLogin.dart';
+import 'package:cycle_app/Service/locationService.dart';
 import 'package:cycle_app/Service/userService.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -9,12 +10,13 @@ GetIt getIt = new GetIt();
 
 void main() {
     getIt.registerSingleton(UserService());
+    getIt.registerSingleton(LocationService());
     runApp(MaterialApp(
-        title: "The Cycle App", home: SelectScreen()
+        title: "The Cycle App", home: MyApp()
     ));
 }
 
-class SelectScreen extends StatelessWidget{
+class MyApp extends StatelessWidget{
   final UserService userService = getIt.get<UserService>();
   @override
   Widget build(BuildContext context) {

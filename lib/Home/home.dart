@@ -54,7 +54,7 @@ class MyHome extends StatelessWidget {
             SectionRuler(
               section: "Show/Hide your location",
             ),
-            UserLocation(userId: id),
+            UserLocation(),
           ],
         )));
   }
