@@ -1,10 +1,11 @@
+import 'package:cycle_app/Service/userService.dart';
+import 'package:cycle_app/main.dart';
 import 'package:flutter/material.dart';
-import 'package:streaming/LoginTokenPreferences.dart';
-import 'package:streaming/pages/AuthPage.dart';
-import 'package:streaming/pages/Registration.dart';
-import 'package:streaming/pages/customShapes/shapeOne.dart';
-import 'package:streaming/pages/customShapes/shapeThree.dart';
-import 'package:streaming/pages/customShapes/shapeTwo.dart';
+import './Registration.dart';
+import './customShapes/shapeOne.dart';
+import './customShapes/shapeThree.dart';
+import './customShapes/shapeTwo.dart';
+
 
 class NewLogin extends StatefulWidget {
   @override
@@ -12,35 +13,28 @@ class NewLogin extends StatefulWidget {
 }
 
 class _NewLoginState extends State<NewLogin> {
+  final UserService userService = getIt.get<UserService>();
   final _formKey = GlobalKey<FormState>();
   bool _login = false;
-  LoginCredentials _loginpost = new LoginCredentials();
 
   TextEditingController username = new TextEditingController();
   TextEditingController password = new TextEditingController();
 
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => ProfilePage()));
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomPadding: false,
+    return 
+    Scaffold(
       body: Container(
         height: MediaQuery.of(context).size.height,
         child: Stack(children: <Widget>[
-          Container(
-            height: MediaQuery.of(context).size.height,
-            child: Image.asset(
-              'assets/images/Test.jpg',
-              fit: BoxFit.cover,
-            ),
-          ),
+        //   Container(
+        //     height: MediaQuery.of(context).size.height,
+        //     child: Image.asset(
+        //       'assets/images/Test.jpg',
+        //       fit: BoxFit.cover,
+        //     ),
+        //   ),
           Container(
             height: MediaQuery.of(context).size.height,
             decoration: BoxDecoration(
@@ -59,17 +53,17 @@ class _NewLoginState extends State<NewLogin> {
           ShapeThree(),
           ShapeTwo(),
           ShapeOne(),
-          Positioned(
-            top: MediaQuery.of(context).size.height * 0.25,
-            left: MediaQuery.of(context).size.width * 0.35,
-            child: Container(
-              height: 125,
-              child: Image.asset(
-                'assets/images/logo.png',
-                fit: BoxFit.fill,
-              ),
-            ),
-          ),
+        //   Positioned(
+        //     top: MediaQuery.of(context).size.height * 0.25,
+        //     left: MediaQuery.of(context).size.width * 0.35,
+        //     child: Container(
+        //       height: 125,
+        //       child: Image.asset(
+        //         'assets/images/logo.png',
+        //         fit: BoxFit.fill,
+        //       ),
+        //     ),
+        //   ),
           Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
@@ -143,10 +137,7 @@ class _NewLoginState extends State<NewLogin> {
                           ),
                           InkWell(
                             onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => ProfilePage()));
+                              
                             },
                             child: Text(
                               "Forgot Password?",
@@ -167,7 +158,7 @@ class _NewLoginState extends State<NewLogin> {
                                         Scaffold.of(context)
                                             .showSnackBar(SnackBar(
                                           content: FutureBuilder(
-                                            future: _loginpost.authenticate(
+                                            future: userService.authenticate(
                                                 username: username.text,
                                                 password: password.text),
                                             builder: (BuildContext context,
@@ -183,11 +174,7 @@ class _NewLoginState extends State<NewLogin> {
                                                       'Unable to login due to some errors');
                                                 } else {
                                                   var response = snapshot.data;
-                                                  print(response);
-
-                                                  _loginpost.persistToken(
-                                                      response['token']);
-
+                                                  
                                                   return Text(
                                                     response['mssg'],
                                                     style: response['mssg'] ==
@@ -253,9 +240,9 @@ class _NewLoginState extends State<NewLogin> {
           icon: Icon(
             Icons.recent_actors,
             color: Colors.white,
-          ),
+          ), onPressed: () {},
         ),
-      ),
+      )
     );
   }
 }

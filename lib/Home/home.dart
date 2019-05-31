@@ -1,14 +1,15 @@
+import 'package:cycle_app/Service/userService.dart';
+import 'package:cycle_app/main.dart';
 import 'package:flutter/material.dart';
 import '../StaticWidgets/sectionRuler.dart';
 import './userlocation.dart';
-import './userIds.dart';
 
 class MyHome extends StatelessWidget {
-  final Function setUserId;
-  final int id;
-  MyHome({this.setUserId, this.id});
+    final UserService userService = getIt.get<UserService>();
+    
   @override
   Widget build(BuildContext context) {
+      int id = userService.userValue.id;
     return Scaffold(
         backgroundColor: Color(0xFF2d3447),
         body: SingleChildScrollView(
@@ -49,7 +50,6 @@ class MyHome extends StatelessWidget {
               section: "Change Cyclist",
             ),
             SizedBox(height: 25),
-            UsersIds(currentId: id, setId: setUserId),
             SizedBox(height: 25),
             SectionRuler(
               section: "Show/Hide your location",

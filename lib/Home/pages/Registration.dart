@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:cycle_app/globals.dart';
 import 'package:http/http.dart' as http;
 
 class Data {
@@ -89,7 +90,8 @@ class _MainFormState extends State<MainForm> {
   }
 
   _MainFormState({Key key});
-  static final Url = 'http://192.168.254.4:3000/signup';
+  
+  static final Url = '${base_url}/signup';
   TextEditingController username = new TextEditingController();
   TextEditingController email = new TextEditingController();
   TextEditingController password = new TextEditingController();
