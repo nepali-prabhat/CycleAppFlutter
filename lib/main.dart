@@ -16,11 +16,13 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
   }
+
   void setUserId(int id) {
     setState(() {
       userId = id;
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
