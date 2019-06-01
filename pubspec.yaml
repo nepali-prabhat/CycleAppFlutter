@@ -28,7 +28,8 @@ dependencies:
   shared_preferences: ^0.5.2+2
   rxdart: ^0.22.0
   get_it: ^1.0.3+1
-  flutter_map: any
+  flutter_map: any # or the latest version on Pub
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -46,9 +47,16 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #  - images/a_dot_burr.jpeg
-  #  - images/a_dot_ham.jpeg
+    assets:
+    - assets/images/banner.png
+    - assets/images/blackpanther.jpg
+    - assets/images/runaways.jpg
+    - assets/images/avengers.jpg
+    - assets/images/punisher.jpg
+    - assets/images/Test.jpg
+    - assets/images/logo.png
+    - assets/images/google.png
+    - assets/images/fb.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
