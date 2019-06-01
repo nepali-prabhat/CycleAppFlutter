@@ -14,7 +14,6 @@ class NewLogin extends StatefulWidget {
 class _NewLoginState extends State<NewLogin> {
   final UserService userService = getIt.get<UserService>();
   final _formKey = GlobalKey<FormState>();
-  bool _login = false;
 
   TextEditingController username = new TextEditingController();
   TextEditingController password = new TextEditingController();
@@ -150,7 +149,6 @@ class _NewLoginState extends State<NewLogin> {
                                           padding: EdgeInsets.symmetric(
                                               vertical: 15, horizontal: 30),
                                           onPressed: () {
-                                            _login = true;
                                             Scaffold.of(context)
                                                 .showSnackBar(SnackBar(
                                               content: FutureBuilder(
