@@ -22,7 +22,8 @@ class LocationService {
         _shouldGetNearbyUsers = new BehaviorSubject.seeded(false);
         _currentLocation = new BehaviorSubject<LongLat>.seeded(null);
         _location.onLocationChanged().listen((Map<String, double> value) {
-            if(_shouldPost.value){
+            //for now wil always get device location
+            if(_shouldPost.value || true){
                 LongLat newLocation =
                 LongLat(long: value['longitude'], lat: value['latitude']);
                 _currentLocation.add(newLocation);

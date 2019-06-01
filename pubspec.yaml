@@ -28,7 +28,7 @@ dependencies:
   shared_preferences: ^0.5.2+2
   rxdart: ^0.22.0
   get_it: ^1.0.3+1
-
+  flutter_map: any
 dev_dependencies:
   flutter_test:
     sdk: flutter

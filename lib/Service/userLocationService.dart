@@ -8,7 +8,6 @@ import 'dart:async';
 import '../globals.dart';
 
   Future<http.Response> postUserLocation(int userId,LongLat currentLocation) async {
-
       UserService userService = getIt.get<UserService>();
     var url = base_url + '/locations';
 
@@ -21,7 +20,7 @@ import '../globals.dart';
     return response;
   }
 
-  Future<List<NearbyUsers>> getNearbyUsers( int userId, LongLat currentLocation) async {
+  Future<List<NearbyUsers>> getNearbyUsers(LongLat currentLocation) async {
     var url = base_url+'/locations/nearby';
       UserService userService = getIt.get<UserService>();
     var urlWithQuery =
