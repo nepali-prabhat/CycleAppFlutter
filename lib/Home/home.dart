@@ -68,7 +68,9 @@ class Home extends StatelessWidget {
               children: <Widget>[
                 NearbyUsersList(),
                 Center(
-                  child: Text("Secon Screen"),
+                  child: RaisedButton(onPressed: (){
+                      getIt.get<UserService>().logOut();
+                  },child: Text("log out"),),
                 ),
                 Text("Third Screen")
               ],
