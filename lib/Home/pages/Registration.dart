@@ -77,10 +77,11 @@ class MainForm extends StatefulWidget {
 }
 
 class _MainFormState extends State<MainForm> {
-  // Future<Data> data;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  bool _autoValidate = false;
   bool sendPostRequest = false;
   bool success = false;
-  
+
   final String signUpURL = '$base_url/signup';
 
   TextEditingController username = new TextEditingController();
@@ -93,22 +94,21 @@ class _MainFormState extends State<MainForm> {
 
   Future<Map<String, dynamic>> createPost() async {
     var response = await http.post(signUpURL, body: {
-        "username": username.text,
-        "f_name": fName.text,
-        "l_name": lName.text,
-        "email": email.text,
-        "password": password.text,
-        "phone_no": phone.text,
-        "address": address.text,
-        "permission":'0',
-        "bio":"my name is jeff."
-        });
+      "username": username.text,
+      "f_name": fName.text,
+      "l_name": lName.text,
+      "email": email.text,
+      "password": password.text,
+      "phone_no": phone.text,
+      "address": address.text,
+      "permission": '0',
+      "bio": "my name is jeff."
+    });
     var jsonData = json.decode(response.body);
     return jsonData;
   }
 
   _MainFormState({Key key});
-  
 
   @override
   Widget build(BuildContext context) {
@@ -121,14 +121,15 @@ class _MainFormState extends State<MainForm> {
               // scolor: Colors.white.withOpacity(0.6),
               decoration: BoxDecoration(color: Colors.white.withOpacity(0.8)),
               child: Form(
-                key: null,
+                key: _formKey,
+                autovalidate: _autoValidate,
                 child: Padding(
                   padding: const EdgeInsets.all(15.0),
                   child: Column(
                     children: <Widget>[
                       new TextFormField(
-                          autofocus: false,
-                          keyboardType: TextInputType.emailAddress, // Use email input type for emails.
+                          keyboardType: TextInputType
+                              .emailAddress, // Use email input type for emails.
                           controller: email,
                           validator: (val) =>
                               !val.contains('@') ? 'Not a valid email' : null,
@@ -143,11 +144,9 @@ class _MainFormState extends State<MainForm> {
                       ),
                       new TextFormField(
                           autofocus: false,
-                          keyboardType: TextInputType.text, // Use email input type for emails.
+                          keyboardType: TextInputType
+                              .text, // Use email input type for emails.
                           controller: username,
-                          validator: (val) => val.length < 6
-                              ? 'Atleast six character required'
-                              : null,
                           decoration: new InputDecoration(
                             icon: Icon(Icons.person_pin_circle),
                             labelText: "Username",
@@ -159,7 +158,8 @@ class _MainFormState extends State<MainForm> {
                       ),
                       new TextFormField(
                           autofocus: false,
-                          keyboardType: TextInputType.text, // Use email input type for emails.
+                          keyboardType: TextInputType
+                              .text, // Use email input type for emails.
                           controller: fName,
                           validator: (val) => val.length < 6
                               ? 'Atleast six character required'
@@ -175,7 +175,8 @@ class _MainFormState extends State<MainForm> {
                       ),
                       new TextFormField(
                           autofocus: false,
-                          keyboardType: TextInputType.text, // Use email input type for emails.
+                          keyboardType: TextInputType
+                              .text, // Use email input type for emails.
                           controller: lName,
                           validator: (val) => val.length < 6
                               ? 'Atleast six character required'
@@ -191,7 +192,8 @@ class _MainFormState extends State<MainForm> {
                       ),
                       new TextFormField(
                           autofocus: false,
-                          keyboardType: TextInputType.phone, // Use email input type for emails.
+                          keyboardType: TextInputType
+                              .phone, // Use email input type for emails.
                           controller: phone,
                           validator: (val) => val.length == 10
                               ? null
@@ -207,7 +209,8 @@ class _MainFormState extends State<MainForm> {
                       ),
                       new TextFormField(
                           autofocus: false,
-                          keyboardType: TextInputType.text, // Use email input type for emails.
+                          keyboardType: TextInputType
+                              .text, // Use email input type for emails.
                           controller: password,
                           validator: (val) => val.length < 6
                               ? 'Atleast six character required'
@@ -224,7 +227,8 @@ class _MainFormState extends State<MainForm> {
                       ),
                       new TextFormField(
                           autofocus: false,
-                          keyboardType: TextInputType.text, // Use email input type for emails.
+                          keyboardType: TextInputType
+                              .text, // Use email input type for emails.
                           controller: address,
                           decoration: new InputDecoration(
                             icon: Icon(Icons.home),
@@ -238,9 +242,65 @@ class _MainFormState extends State<MainForm> {
                       Builder(
                         builder: (context) => GestureDetector(
                               onTap: () {
-                                setState(() {
-                                  sendPostRequest = true;
-                                });
+                                if (_formKey.currentState.validate()) {
+                                  Scaffold.of(context).showSnackBar(SnackBar(
+                                    duration: Duration(seconds: 3),
+                                    content: FutureBuilder(
+                                        future: createPost(),
+                                        builder: (BuildContext context,
+                                            AsyncSnapshot snapshot) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return Text("Loaading...");
+                                          }
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.done) {
+                                            if (snapshot.hasError) {
+                                              return Text(
+                                                  "Something went Wrong");
+                                            } else if (snapshot.hasData) {
+                                              var response = snapshot.data;
+
+                                              for (var value
+                                                  in response.values) {
+                                                var edited = value ==
+                                                        "Registration successfull"
+                                                    ? value.toString()
+                                                    : value
+                                                        .toString()
+                                                        .substring(
+                                                            1,
+                                                            value
+                                                                    .toString()
+                                                                    .length -
+                                                                1);
+                                                return Text(
+                                                  edited,
+                                                  style: response['mssg'] ==
+                                                          "Registration successfull"
+                                                      ? TextStyle(
+                                                          color: Colors.green,
+                                                          fontSize: 15,
+                                                          fontFamily:
+                                                              "Roboto-Light.ttf",
+                                                        )
+                                                      : TextStyle(
+                                                          color: Colors.red,
+                                                          fontSize: 15,
+                                                          fontFamily:
+                                                              "Roboto-Light.ttf",
+                                                        ),
+                                                );
+                                              }
+                                            }
+                                          }
+                                        }),
+                                  ));
+                                } else {
+                                  setState(() {
+                                    _autoValidate = true;
+                                  });
+                                }
                               },
                               child: new Container(
                                 padding: const EdgeInsets.symmetric(
@@ -267,59 +327,6 @@ class _MainFormState extends State<MainForm> {
                       SizedBox(
                         height: 20,
                       ),
-                      sendPostRequest
-                          ? FutureBuilder(
-                              future: createPost(),
-                              builder: (BuildContext context,
-                                  AsyncSnapshot snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return CircularProgressIndicator();
-                                }
-                                if (snapshot.connectionState ==
-                                    ConnectionState.done) {
-                                  if (snapshot.hasError) {
-                                    return Text("Something went Wrong");
-                                  } else if (snapshot.hasData) {
-                                    var response = snapshot.data;
-                                    //returns {mssg: Registration successfull} if successful 
-                                    //popping page if this comes
-                                    //note: not a good method to check
-                                    if(response.containsValue("Registration successfull")){
-                                        Navigator.of(context).pop();
-                                    }
-                                    for (var value in response.values) {
-                                      int l = response.length;
-                                      return Container(
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 15, horizontal: 15),
-                                        decoration: BoxDecoration(
-                                            color: Colors.grey.withOpacity(0.2),
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(20))),
-                                        child: Text(
-                                          value.toString(),
-                                          textAlign: TextAlign.center,
-                                          style: l == 1
-                                              ? TextStyle(
-                                                  color: Colors.green,
-                                                  fontSize: 20,
-                                                  fontFamily:
-                                                      "Roboto-Light.ttf",
-                                                )
-                                              : TextStyle(
-                                                  color: Colors.red,
-                                                  fontSize: 20,
-                                                  fontFamily:
-                                                      "Roboto-Light.ttf",
-                                                ),
-                                        ),
-                                      );
-                                    }
-                                  }
-                                }
-                              })
-                          : Container(),
                       SizedBox(
                         height: 25,
                       ),
