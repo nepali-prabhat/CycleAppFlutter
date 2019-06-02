@@ -30,7 +30,6 @@ class UserService {
   Observable<String> get token$ => _token.stream;
   String get tokenValue => _token.value;
 
-
   Future<Map<String, dynamic>> authenticate({ String username,  String password}) async {
     final String loginURL = base_url + "/login";
     
