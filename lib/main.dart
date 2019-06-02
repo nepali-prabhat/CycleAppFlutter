@@ -1,6 +1,7 @@
 import 'package:cycle_app/Home/home.dart';
 import 'package:cycle_app/Home/pages/newLogin.dart';
 import 'package:cycle_app/Service/locationService.dart';
+import 'package:cycle_app/Service/mapService.dart';
 import 'package:cycle_app/Service/userService.dart';
 import 'package:cycle_app/configs.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ void main() {
     getIt.registerSingleton(LocationService());
     //git ignored:
     getIt.registerSingleton(Configs());
+    getIt.registerSingleton(MapService());
     
     runApp(MaterialApp(
         title: "The Cycle App", home: MyApp()

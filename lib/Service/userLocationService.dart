@@ -20,15 +20,13 @@ import '../globals.dart';
     return response;
   }
 
-  Future<List<NearbyUsers>> getNearbyUsers(LongLat currentLocation) async {
+  Future<http.Response> getNearbyUsers(LongLat currentLocation) async {
     var url = base_url+'/locations/nearby';
       UserService userService = getIt.get<UserService>();
     var urlWithQuery =
         _makeQueryURL(url, {'long': currentLocation.long, 'lat': currentLocation.lat});
     final response = await http.get(urlWithQuery,headers: {"Authorization":"Bearer "+userService.tokenValue});
-    List<NearbyUsers> nearbyUsers = nearbyUsersFromJson(response.body);
-    print(response.body);
-    return nearbyUsers;
+    return response;
   }
 
   String _makeQueryURL(String url, Map<String,dynamic> queryParams){
