@@ -14,7 +14,7 @@ class MapService{
     Timer _updateTimer;
     MapService(){
         _nearbyUsers = new BehaviorSubject();
-        _shouldUpdate = new BehaviorSubject.seeded(false);
+        _shouldUpdate = new BehaviorSubject.seeded(true);
         _shouldGetNearbyUsers = new BehaviorSubject.seeded(false);
         _updater = new BehaviorSubject.seeded(0);
         _updateTimer = new Timer.periodic(Duration(seconds:1), (Timer timer){
@@ -26,6 +26,7 @@ class MapService{
     //getters for stream and value:
     Observable<List<NearbyUsers>> get nearbyUsers$ => _nearbyUsers.stream;
     List<NearbyUsers> get nearbyUsers => _nearbyUsers.value;
+    bool get nearbyUsersHasValue => _nearbyUsers.hasValue;
 
     Observable<int> get updater$ => _updater.stream;
     bool get shouldUpdate => _shouldUpdate.value;
@@ -40,6 +41,7 @@ class MapService{
         try{
             http.Response response = await getNearbyUsers(getIt.get<LocationService>().currentLocation);
             if(response.statusCode != 200){
+
                 _nearbyUsers.addError({"msg":"Sorry, couldnt get nearby cyclists."});
             }else{
                 var body = response.body;

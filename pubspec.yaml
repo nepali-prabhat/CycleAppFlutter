@@ -81,6 +81,9 @@ flutter:
     - family: Gloria
       fonts:
         - asset: fonts/Gloria_Hallelujah/GloriaHallelujah.ttf
+    - family: Titil
+      fonts:
+        - asset: fonts/Titillium_Web/TitilliumWeb-SemiBold.ttf
   #   - family: Trajan Pro
   #     fonts:
   #       - asset: fonts/TrajanPro.ttf

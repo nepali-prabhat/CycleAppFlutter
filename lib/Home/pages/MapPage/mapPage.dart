@@ -1,4 +1,5 @@
 import 'package:cycle_app/Home/pages/MapPage/map.dart';
+import 'package:cycle_app/Home/pages/MapPage/usersList.dart';
 import 'package:cycle_app/Model/NearbyUsers.dart';
 import 'package:cycle_app/Service/locationService.dart';
 import 'package:cycle_app/Service/mapService.dart';
@@ -15,23 +16,11 @@ class MapPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        Padding(
-          padding: EdgeInsets.fromLTRB(15, 15, 15, 5),
-          child: Container(
-              height: MediaQuery.of(context).size.height * .4,
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                BoxShadow(
-                    blurRadius: 8, color: Colors.black45, spreadRadius: 2),
-              ]),
-              child: MyMap()),
-        ),
+        
         Expanded(
-            child: Padding(
+          child: Padding(
           padding: EdgeInsets.fromLTRB(15, 15, 15, 5),
           child: Container(
-
             child: StreamBuilder(
                 stream: mapService.shouldGetNearbyUsers$,
                 builder: (context, snapshot) {
@@ -41,15 +30,12 @@ class MapPage extends StatelessWidget {
                   //once value arrived
                   if (snapshot.connectionState == ConnectionState.active) {
                     bool shouldGetNearbyUsers = snapshot.data;
-
                     if (shouldGetNearbyUsers == true) {
                       //return list of nearby users
-                        return Text("list of nearby users");
+                        return NearByUsersList();
                     } else {
                       //return a button to get nearby user
-                      return 
-                      
-                      Center(
+                      return Center(
                         child: RaisedButton(
                             onPressed: () {
                               mapService.setGetNearbyUsers(true);
@@ -60,8 +46,21 @@ class MapPage extends StatelessWidget {
                   }
                 }),
           ),
-        ))
+        )),
+        Padding(
+          padding: EdgeInsets.fromLTRB(0, 25, 0, 0),
+          child: Container(
+              height: MediaQuery.of(context).size.height * .4,
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                BoxShadow(
+                    blurRadius: 8, color: Colors.black45, spreadRadius: 2),
+              ]),
+              child: MyMap()),
+        ),
       ],
     );
   }
 }
+

@@ -16,7 +16,7 @@ class Home extends StatelessWidget {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-          backgroundColor: Colors.white,
+          backgroundColor: Color.fromARGB(255,246,248,250),
           appBar: AppBar(
             elevation: 0.0,
             backgroundColor: Colors.transparent,
@@ -63,7 +63,6 @@ class Home extends StatelessWidget {
             ),
           ),
           body: Container(
-              padding: EdgeInsets.fromLTRB(10, 0, 10, 20),
             child: TabBarView(
               physics: NeverScrollableScrollPhysics(),
               children: <Widget>[

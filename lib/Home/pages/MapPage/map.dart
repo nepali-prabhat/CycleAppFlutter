@@ -1,3 +1,4 @@
+import 'package:cycle_app/Model/NearbyUsers.dart';
 import 'package:cycle_app/Model/longLat.dart';
 import 'package:cycle_app/Service/locationService.dart';
 import 'package:cycle_app/Service/mapService.dart';
@@ -21,7 +22,22 @@ class MyMap extends StatelessWidget {
             builder: (ctx) =>
                     Icon(Icons.location_on, color: Colors.blue),
       ));
-      
+      if(mapService.shouldGetNearbyUsers == true){
+          if(mapService.nearbyUsersHasValue){
+              List<NearbyUsers> nearby = mapService.nearbyUsers;
+              for(NearbyUsers user in nearby){
+                  //print("${user.lat}, ${user.long}");
+                  markers.add(Marker(
+                      width: 80.0,
+                      height: 80.0,
+                      point: LatLng(user.lat,user.long),
+                      builder:(ctx)=>
+                        Icon(Icons.location_on, color:Colors.red)
+                  ));
+              }
+          }
+      }
+      //print(markers.length);
       return markers;
   }
   @override
