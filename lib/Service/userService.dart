@@ -30,6 +30,20 @@ class UserService {
   Observable<String> get token$ => _token.stream;
   String get tokenValue => _token.value;
 
+  void changePermission(value){
+      if(value==true){
+          UserModel newUserModel = _user.value;
+          newUserModel.permission = 1;
+          _user.add(newUserModel);
+      }else{
+          UserModel newUserModel = _user.value;
+          newUserModel.permission = 0;
+          _user.add(newUserModel);
+      }
+          _saveUserToLocalStore();
+      //todo:handle database query
+  }
+
   Future<Map<String, dynamic>> authenticate({ String username,  String password}) async {
     final String loginURL = base_url + "/login";
     

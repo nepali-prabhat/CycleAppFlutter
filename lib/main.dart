@@ -1,3 +1,4 @@
+import 'package:cycle_app/Home/Layout.dart';
 import 'package:cycle_app/Home/home.dart';
 import 'package:cycle_app/Home/pages/newLogin.dart';
 import 'package:cycle_app/Service/locationService.dart';
@@ -33,7 +34,7 @@ class MyApp extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.active) {
             bool loggedIn = snapshot.data;
             if (loggedIn) {
-              return Home();
+              return Layout();
             } else {
               return NewLogin();
             }

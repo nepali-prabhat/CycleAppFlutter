@@ -18,8 +18,11 @@ class MapService{
         _shouldGetNearbyUsers = new BehaviorSubject.seeded(false);
         _updater = new BehaviorSubject.seeded(0);
         _updateTimer = new Timer.periodic(Duration(seconds:1), (Timer timer){
-            if(_shouldUpdate.value){
+            
                 _updater.add(updater+1);
+
+            if(shouldGetNearbyUsers == true){
+                getNearbyUsersFromService();
             }
         });
     }
@@ -51,13 +54,9 @@ class MapService{
         }catch(exception){
             _nearbyUsers.addError({"msg":"Sorry, couldnt get nearby cyclists."});
         }
-        
     }
     void setGetNearbyUsers(bool value){
         _shouldGetNearbyUsers.add(value);
-        if(value == true){
-            getNearbyUsersFromService();
-        }
     }
     void setShouldUpdate(bool value){
         _shouldUpdate.add(value);

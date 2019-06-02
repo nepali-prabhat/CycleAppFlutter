@@ -16,7 +16,6 @@ class MapPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        
         Expanded(
           child: Padding(
           padding: EdgeInsets.fromLTRB(15, 15, 15, 5),

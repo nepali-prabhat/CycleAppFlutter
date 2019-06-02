@@ -3,6 +3,7 @@ import 'package:cycle_app/Service/mapService.dart';
 import 'package:cycle_app/main.dart';
 import 'package:location/location.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LocationService {
     BehaviorSubject<bool> _shouldPost;
@@ -26,11 +27,34 @@ class LocationService {
                 _currentLocation.add(newLocation);
             }
         });
+        _readSettingsFromLocalStore();
     }
 
-    void setShouldPost(bool state){
-        _shouldPost.add(state);
+    void setShouldPost(bool value){
+        _shouldPost.add(value);
+        _saveSettingsToLocalStore();
+        //todo: post current location in database
+
     }
+
+    void _saveSettingsToLocalStore(){
+    SharedPreferences.getInstance().then((pref){
+        pref.setBool("shouldPost",shouldPost);
+    });
+  }
+  void _readSettingsFromLocalStore(){
+    SharedPreferences.getInstance().then((pref){
+        if(pref.containsKey('shouldPost')){
+            _shouldPost.add(pref.getBool("shouldPost"));
+        }
+    });
+  }
+  void _deleteSettingsFromLocalStore(){
+      SharedPreferences.getInstance().then((pref){
+        pref.remove('shouldPost');
+      });
+  }
+
     void dispose(){
         _currentLocation.close();
         _shouldPost.close();
