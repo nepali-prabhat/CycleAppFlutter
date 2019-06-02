@@ -42,6 +42,14 @@ class UserService {
       }
           _saveUserToLocalStore();
       //todo:handle database query
+      
+      http.put('$base_url/users/permission',body:{
+          'permission':'${value}'
+      }).then((response){
+        //   print("changed permission.");
+        //   print(response.body);
+      });
+
   }
 
   Future<Map<String, dynamic>> authenticate({ String username,  String password}) async {

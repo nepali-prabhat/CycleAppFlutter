@@ -40,6 +40,7 @@ class _LayoutState extends State<Layout> with SingleTickerProviderStateMixin {
   @override
   void dispose() {
     _controller.reverse();
+    _controller.dispose();
     super.dispose();
   }
 
@@ -89,7 +90,6 @@ class _LayoutState extends State<Layout> with SingleTickerProviderStateMixin {
   // }
   Widget settings(context) {
     double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
     bool permission = userService.userValue.permission == 1 ? true : false;
     bool post = locationService.shouldPost;
     return PreferredSize(
@@ -199,7 +199,16 @@ class _LayoutState extends State<Layout> with SingleTickerProviderStateMixin {
                     ],
                   ),
                 ),
-                SizedBox(height: 30)
+                SizedBox(height: 30),
+                Padding(
+                    padding: EdgeInsets.symmetric(horizontal:25),
+                    child: FlatButton(
+                        color: Colors.red[300],
+                        onPressed:(){
+                            userService.logOut();
+                    },child: Center(child: Text("Log Out", style: TextStyle(color:Colors.white, fontFamily: "Titil", fontSize: 20))),)
+                ),
+                SizedBox(height: 30),
               ],
             )),
       ),

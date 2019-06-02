@@ -1,9 +1,12 @@
 import 'package:cycle_app/Model/longLat.dart';
 import 'package:cycle_app/Service/mapService.dart';
+import 'package:cycle_app/Service/userService.dart';
+import 'package:cycle_app/globals.dart';
 import 'package:cycle_app/main.dart';
 import 'package:location/location.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 class LocationService {
     BehaviorSubject<bool> _shouldPost;
@@ -20,11 +23,19 @@ class LocationService {
         _shouldPost = new BehaviorSubject.seeded(false);
         _currentLocation = new BehaviorSubject<LongLat>.seeded(null);
         _location.onLocationChanged().listen((Map<String, double> value) {
-            //for now wil always get device location
-            if(_shouldPost.value || true){
-                LongLat newLocation =
-                LongLat(long: value['longitude'], lat: value['latitude']);
-                _currentLocation.add(newLocation);
+            //for now will always get device location
+            LongLat newLocation =
+            LongLat(long: value['longitude'], lat: value['latitude']);
+            _currentLocation.add(newLocation);
+            if(shouldPost){
+                http.post("$base_url/locations",
+                headers:  {"Authorization":"Bearer "+getIt.get<UserService>().tokenValue},
+                body:{
+                    "long": '${currentLocation.long}',
+                    "lat":'${currentLocation.lat}',
+                }).then((response){
+                    //print("current location end point : ${response.body}");
+                });
             }
         });
         _readSettingsFromLocalStore();
@@ -34,7 +45,6 @@ class LocationService {
         _shouldPost.add(value);
         _saveSettingsToLocalStore();
         //todo: post current location in database
-
     }
 
     void _saveSettingsToLocalStore(){
