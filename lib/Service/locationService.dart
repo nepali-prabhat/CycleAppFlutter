@@ -29,7 +29,7 @@ class LocationService {
             _currentLocation.add(newLocation);
             if(shouldPost){
                 http.post("$base_url/locations",
-                headers:  {"Authorization":"Bearer "+getIt.get<UserService>().tokenValue},
+                headers:  {"Authorization":"Bearer ${getIt.get<UserService>().tokenValue}"},
                 body:{
                     "long": '${currentLocation.long}',
                     "lat":'${currentLocation.lat}',

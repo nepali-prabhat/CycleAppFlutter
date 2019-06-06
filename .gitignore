@@ -14,7 +14,6 @@
 *.ipr
 *.iws
 .idea/
-
 # Visual Studio Code related
 .vscode/
 
@@ -28,7 +27,8 @@
 /build/
 
 #config file
-./lib/configs.dart
+**/lib/globals.dart
+**/lib/config.dart
 
 # Android related
 **/android/**/gradle-wrapper.jar

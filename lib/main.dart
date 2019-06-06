@@ -1,5 +1,4 @@
 import 'package:cycle_app/Home/Layout.dart';
-import 'package:cycle_app/Home/home.dart';
 import 'package:cycle_app/Home/pages/newLogin.dart';
 import 'package:cycle_app/Service/locationService.dart';
 import 'package:cycle_app/Service/mapService.dart';
@@ -18,6 +17,7 @@ void main() {
     getIt.registerSingleton(MapService());
     
     runApp(MaterialApp(
+        debugShowCheckedModeBanner : false,
         title: "The Cycle App", home: MyApp()
     ));
 }

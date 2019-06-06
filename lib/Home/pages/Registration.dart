@@ -102,7 +102,7 @@ class _MainFormState extends State<MainForm> {
       "phone_no": phone.text,
       "address": address.text,
       "permission": '0',
-      "bio": "my name is jeff."
+      "bio": "Namastae, i am ${username.text}."
     });
     var jsonData = json.decode(response.body);
     return jsonData;
