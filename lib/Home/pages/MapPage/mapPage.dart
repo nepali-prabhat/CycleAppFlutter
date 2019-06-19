@@ -29,6 +29,7 @@ class _MapPageState extends State<MapPage> {
 
   @override
   Widget build(BuildContext context) {
+      print("map page rendered");
     return Stack(children: [
       !expandMap
           ? Column(

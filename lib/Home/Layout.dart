@@ -1,3 +1,4 @@
+import 'package:cycle_app/Home/pages/EventsPage/eventPage.dart';
 import 'package:cycle_app/Home/pages/MapPage/mapPage.dart';
 import 'package:cycle_app/Model/NearbyUsers.dart';
 import 'package:cycle_app/Model/UserModel.dart';
@@ -30,7 +31,13 @@ class _LayoutState extends State<Layout> with SingleTickerProviderStateMixin {
   UserService userService = getIt.get<UserService>();
   LocationService locationService = getIt.get<LocationService>();
   MapService mapService = getIt.get<MapService>();
+  int activeIndex = 1;
   bool showSettings;
+  changeActiveIndex(int i){
+      setState((){
+          activeIndex = i;
+      });
+  }
   @override
   void initState() {
     super.initState();
@@ -126,7 +133,9 @@ class _LayoutState extends State<Layout> with SingleTickerProviderStateMixin {
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 20),
                   child: FlatButton(
-                    onPressed: () {},
+                    onPressed: () {
+                        changeActiveIndex(0);
+                    },
                     child: Container(
                         padding: EdgeInsets.all(10),
                         child: Row(
@@ -147,16 +156,18 @@ class _LayoutState extends State<Layout> with SingleTickerProviderStateMixin {
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 20),
                   child: FlatButton(
-                    onPressed: () {},
+                    onPressed: () {
+                         changeActiveIndex(1);
+                    },
                     child: Container(
                         padding: EdgeInsets.all(10),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: <Widget>[
-                            Icon(Icons.portrait,
+                            Icon(Icons.event_note,
                                 color: Colors.indigo[300], size: 25),
                             SizedBox(width: 10),
-                            Text("Profile",
+                            Text("Events",
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontFamily: "Titil",
@@ -203,7 +214,18 @@ class _LayoutState extends State<Layout> with SingleTickerProviderStateMixin {
       ],
     );
   }
-
+ Widget getPagesBasedOnIndex(){
+     if(activeIndex==0){
+         return MapPage(
+                    toggleCollapse: toggleCollapse,
+                    collapsedState: _isCollapsed);
+     }
+     else{
+         return EventPage(
+                toggleCollapse: toggleCollapse,
+                collapsedState: _isCollapsed);
+     }
+ }
   Widget home(context) {
     Size size = MediaQuery.of(context).size;
     screenheight = size.height;
@@ -219,21 +241,9 @@ class _LayoutState extends State<Layout> with SingleTickerProviderStateMixin {
           borderRadius: BorderRadius.all(Radius.circular(60)),
           elevation: 20.0,
           color: backColor,
-          child: GestureDetector(
-            onTap: () {
-              setState(() {
-                if (!_isCollapsed) {
-                  _controller.reverse();
-                  _isCollapsed = true;
-                }
-              });
-            },
-            child: Scaffold(
-              body: Container(
-                child: MapPage(
-                    toggleCollapse: toggleCollapse,
-                    collapsedState: _isCollapsed),
-              ),
+          child: Scaffold(
+            body: Container(
+              child: getPagesBasedOnIndex()
             ),
           ),
         ));
@@ -318,6 +328,83 @@ class _SettingsState extends State<Settings> {
                                         color: Colors.red[300]))),
                           ],
                         ),
+                        
+                        SizedBox(height: 30),SectionRuler(
+                            section: "Change permissions.",
+                            color: Colors.black45),
+                        SizedBox(height: 30),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 15),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text("Public Location",
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontFamily: "Titil",
+                                      color: Color.fromARGB(130, 0, 0, 0))),
+                              Switch(
+                                  value: post,
+                                  onChanged: (value) {
+                                    //change in database
+                                    locationService.setShouldPost(value);
+                                  })
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 15),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text("Get Nearby Cyclists",
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontFamily: "Titil",
+                                      color: Color.fromARGB(130, 0, 0, 0))),
+                              Switch(
+                                  value: mapService.shouldGetNearbyUsers,
+                                  onChanged: (value) {
+                                    //change in database
+                                    mapService.setGetNearbyUsers(value);
+                                  })
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 15),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text("Public Info",
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontFamily: "Titil",
+                                      color: Color.fromARGB(130, 0, 0, 0))),
+                              Switch(
+                                  value: permission,
+                                  onChanged: (value) {
+                                    //change in database
+                                    userService.changePermission(value);
+                                  })
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 30),
+                        Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 25),
+                            child: FlatButton(
+                              color: Colors.red[300],
+                              onPressed: () {
+                                userService.logOut();
+                              },
+                              child: Center(
+                                  child: Text("Log Out",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontFamily: "Titil",
+                                          fontSize: 20))),
+                            )),
                         SizedBox(height: 30),
                         SectionRuler(
                             section: "Your Profile.", color: Colors.black45),
@@ -445,83 +532,7 @@ class _SettingsState extends State<Settings> {
                                           fontSize: 20))),
                             )),
                         SizedBox(height: 30),
-                        SectionRuler(
-                            section: "Change permissions.",
-                            color: Colors.black45),
-                        SizedBox(height: 30),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 15),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Text("Public Location",
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontFamily: "Titil",
-                                      color: Color.fromARGB(130, 0, 0, 0))),
-                              Switch(
-                                  value: post,
-                                  onChanged: (value) {
-                                    //change in database
-                                    locationService.setShouldPost(value);
-                                  })
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 15),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Text("Get Nearby Cyclists",
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontFamily: "Titil",
-                                      color: Color.fromARGB(130, 0, 0, 0))),
-                              Switch(
-                                  value: mapService.shouldGetNearbyUsers,
-                                  onChanged: (value) {
-                                    //change in database
-                                    mapService.setGetNearbyUsers(value);
-                                  })
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 15),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Text("Public Info",
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontFamily: "Titil",
-                                      color: Color.fromARGB(130, 0, 0, 0))),
-                              Switch(
-                                  value: permission,
-                                  onChanged: (value) {
-                                    //change in database
-                                    userService.changePermission(value);
-                                  })
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 30),
-                        Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 25),
-                            child: FlatButton(
-                              color: Colors.red[300],
-                              onPressed: () {
-                                userService.logOut();
-                              },
-                              child: Center(
-                                  child: Text("Log Out",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontFamily: "Titil",
-                                          fontSize: 20))),
-                            )),
-                        SizedBox(height: 30),
+                        
                       ],
                     ))
                 : ChangeProfile(

@@ -1,5 +1,6 @@
 import 'package:cycle_app/Home/Layout.dart';
 import 'package:cycle_app/Home/pages/newLogin.dart';
+import 'package:cycle_app/Service/groupService.dart';
 import 'package:cycle_app/Service/locationService.dart';
 import 'package:cycle_app/Service/mapService.dart';
 import 'package:cycle_app/Service/userService.dart';
@@ -15,10 +16,12 @@ void main() {
     //git ignored:
     getIt.registerSingleton(Configs());
     getIt.registerSingleton(MapService());
+    getIt.registerSingleton(GroupService());
     
     runApp(MaterialApp(
         debugShowCheckedModeBanner : false,
-        title: "The Cycle App", home: MyApp()
+        title: "The Cycle App", home: MyApp(),
+        //todo: implement group nav properly here
     ));
 }
 class MyApp extends StatelessWidget {

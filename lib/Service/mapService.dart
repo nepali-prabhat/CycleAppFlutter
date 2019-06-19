@@ -5,7 +5,9 @@ import 'package:cycle_app/Service/userLocationService.dart';
 import 'package:cycle_app/main.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:http/http.dart' as http;
-
+/**
+ * https://api.mapbox.com/geocoding/v5/mapbox.places/85.320706,27.709841.json?access_token=pk.eyJ1IjoibWF0dGZpY2tlIiwiYSI6ImNqNnM2YmFoNzAwcTMzM214NTB1NHdwbnoifQ.Or19S7KmYPHW8YjRz82v6g&cachebuster=1560524191546&autocomplete=true&types=locality
+ */
 class MapService{
     BehaviorSubject<List<NearbyUsers>> _nearbyUsers;
     BehaviorSubject<bool> _shouldUpdate;
@@ -50,7 +52,7 @@ class MapService{
                 var body = response.body;
                 List<NearbyUsers> nearbyUsersResponse = nearbyUsersFromJson(body);
                 _nearbyUsers.add(nearbyUsersResponse);
-            }   
+            }
         }catch(exception){
             _nearbyUsers.addError({"msg":"Sorry, couldnt get nearby cyclists."});
         }
