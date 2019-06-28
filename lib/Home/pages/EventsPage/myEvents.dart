@@ -1,12 +1,15 @@
 import 'package:cycle_app/Home/pages/Group/group.dart';
+import 'package:cycle_app/Model/groupModel.dart';
 import 'package:cycle_app/Model/myEventsModel.dart';
 import 'package:cycle_app/Service/groupService.dart';
 import 'package:cycle_app/Service/userService.dart';
 import 'package:cycle_app/StaticWidgets/sectionRuler.dart';
+import 'package:cycle_app/globals.dart';
 import 'package:cycle_app/main.dart';
 import 'package:flutter/material.dart';
 import 'package:cycle_app/Service/eventService.dart';
 import 'package:toast/toast.dart';
+import 'package:http/http.dart' as http;
 
 class MyEventLayout extends StatefulWidget {
   final MyEventsModel event;
@@ -168,15 +171,28 @@ class _MyEventLayoutState extends State<MyEventLayout> {
                             : SizedBox(),
                         RaisedButton(
                             color: Colors.blue[100],
-                            onPressed: () {
-                                Toast.show('comming soon',context);
-                            //     GroupService groupService = getIt.get<GroupService>();
-                            //     groupService.addEvent(widget.event);
-                            //   Navigator.push(
-                            //     context,
-                            //     MaterialPageRoute(
-                            //         builder: (context) => Group(event:widget.event))
-                            //   );
+                            onPressed: () async {
+                              // GroupService groupService = getIt.get<GroupService>();
+                              // groupService.addEvent(widget.event);
+                              http.Response response = await http.get(
+                                  '$base_url/groups/of/${widget.event.id}',
+                                  headers: {
+                                    "Authorization":
+                                        "Bearer ${getIt.get<UserService>().tokenValue}"
+                                  });
+                              if (response.statusCode == 200) {
+                                GroupModel group = groupModelFromJson(response.body);
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Group(
+                                              event: widget.event,
+                                              group: group
+                                            )));
+                              } else {
+                                Toast.show("couldn't open group.", context,
+                                    duration: Toast.LENGTH_LONG);
+                              }
                             },
                             child: Text('Group')),
                         widget.isMine
@@ -263,8 +279,11 @@ class MyEvents extends StatelessWidget {
                     });
                   });
                   var evetsLayoutList = participatedEvent
-                      .map((event) => (MyEventLayout(event,
-                          changeActiveIndex: changeActiveIndex,isMine: false,)))
+                      .map((event) => (MyEventLayout(
+                            event,
+                            changeActiveIndex: changeActiveIndex,
+                            isMine: false,
+                          )))
                       .toList();
                   return Column(children: evetsLayoutList);
                 } else {

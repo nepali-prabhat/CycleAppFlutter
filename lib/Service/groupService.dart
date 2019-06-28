@@ -35,12 +35,12 @@ class GroupService{
     
     GroupService(){
         _event = new BehaviorSubject<MyEventsModel>();
-        _message = new BehaviorSubject<List<MessageModel>>();
+        _message = new BehaviorSubject<List<MessageModel>>.seeded([]);
         _updater = new BehaviorSubject<int>.seeded(1);
         _group = new BehaviorSubject<GroupModel>();
         _participants = new BehaviorSubject();
         
-        _updateTimer = new Timer.periodic(Duration(seconds:1), (Timer timer){
+        _updateTimer = new Timer.periodic(Duration(seconds:5), (Timer timer){
                 _updater.add(updater+1);
         });
     }
@@ -52,7 +52,7 @@ class GroupService{
             GroupModel group = groupModelFromJson(response.body);
             _addGroup(group);
             _addParticipant();
-            addMessageByFetching();
+            addMessageByFetching(group.id);
         }else{
         }
     }
@@ -63,9 +63,11 @@ class GroupService{
         _participants.add(tempParticipants);
     });
     }
-    void addMessageByFetching() async{
-        http.Response response = await http.get('$base_url/messages/${group.id}',);
+    void addMessageByFetching(int groupId) async{
+        print('addMessage by fetching');
+        http.Response response = await http.get('$base_url/messages/${groupId}',headers:  {"Authorization":"Bearer ${getIt.get<UserService>().tokenValue}"});
         if(response.statusCode == 200){
+            print('200');
             List<MessageModel> msg = messageModelFromJson(response.body);
             _message.add(msg);
         }
