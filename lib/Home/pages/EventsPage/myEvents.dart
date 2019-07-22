@@ -172,8 +172,9 @@ class _MyEventLayoutState extends State<MyEventLayout> {
                         RaisedButton(
                             color: Colors.blue[100],
                             onPressed: () async {
-                              // GroupService groupService = getIt.get<GroupService>();
-                              // groupService.addEvent(widget.event);
+                              GroupService groupService =
+                                  getIt.get<GroupService>();
+                              groupService.addEvent(widget.event);
                               http.Response response = await http.get(
                                   '$base_url/groups/of/${widget.event.id}',
                                   headers: {
@@ -181,14 +182,14 @@ class _MyEventLayoutState extends State<MyEventLayout> {
                                         "Bearer ${getIt.get<UserService>().tokenValue}"
                                   });
                               if (response.statusCode == 200) {
-                                GroupModel group = groupModelFromJson(response.body);
+                                GroupModel group =
+                                    groupModelFromJson(response.body);
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => Group(
-                                              event: widget.event,
-                                              group: group
-                                            )));
+                                            event: widget.event,
+                                            group: group)));
                               } else {
                                 Toast.show("couldn't open group.", context,
                                     duration: Toast.LENGTH_LONG);

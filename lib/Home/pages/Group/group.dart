@@ -27,13 +27,15 @@ class _GroupState extends State<Group> {
   GroupService groupService = getIt.get<GroupService>();
   TextEditingController message = new TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  bool renderLol = false;
   @override
   void initState() {
-      Timer.periodic(Duration(milliseconds:500), (Timer timer){
-         groupService.addMessageByFetching(widget.group.id);    
-        });
-
+    groupService.setWillUpdate(true);
     super.initState();
+  }
+
+  void dispose() {
+    groupService.setWillUpdate(false);
   }
 
   //get messages of group
@@ -79,7 +81,6 @@ class _GroupState extends State<Group> {
   }
 
   bool seeGroupDetails = false;
-  bool renderLol = false;
   bool postEditedText = false;
   int editedId = -1;
   Future<http.Response> getParticipants() {
@@ -116,132 +117,164 @@ class _GroupState extends State<Group> {
                     //messages
                     Expanded(
                       child: Container(
-                          child:StreamBuilder(
-                                    stream: groupService.message$,
-                                    builder: (context, snapshot) {
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.active) {
-                                        List<MessageModel> msg = snapshot.data;
-                                        return SingleChildScrollView(
-                                          child: Container(
-                                            child: Column(
-                                                children: msg.reversed
-                                                    .map((m) =>
-                                                        (GestureDetector(
-                                                            onLongPressEnd:
-                                                                (LongPressEndDetails
-                                                                    details) {
-                                                              //open edit, delete option
-                                                              if (m.userId ==
-                                                                  userService
-                                                                      .userValue
-                                                                      .id) {
-                                                                showDialog(
-                                                                    context:
-                                                                        context,
-                                                                    builder:
-                                                                        (context) {
-                                                                      return AlertDialog(
-                                                                        title: Text(
-                                                                            "Update msg",
-                                                                            style:
-                                                                                TextStyle(fontSize: 18)),
-                                                                        actions: <
-                                                                            Widget>[
-                                                                          OutlineButton(
-                                                                            child:
-                                                                                new Text("Edit", style: TextStyle(fontSize: 18, color: Colors.green[300])),
-                                                                            onPressed:
-                                                                                () {
-                                                                              // edit here
-                                                                              message.text = '${m.text}';
-                                                                              this.setState(() {
-                                                                                postEditedText = true;
-                                                                                editedId = m.id;
-                                                                              });
-                                                                              Navigator.of(context).pop();
-                                                                            },
-                                                                          ),
-                                                                          OutlineButton(
-                                                                            child:
-                                                                                new Text("Delete", style: TextStyle(fontSize: 18, color: Colors.red[300])),
-                                                                            onPressed:
-                                                                                () async {
-                                                                              //send delete request to server
-                                                                              http.Response response = await http.delete('$base_url/messages/${m.id}', headers: {
-                                                                                "Authorization": "Bearer ${getIt.get<UserService>().tokenValue}"
-                                                                              });
-                                                                              if (response.statusCode == 200) {
-                                                                                Toast.show("deleted successfully.", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-
-                                                                                this.setState(() {
-                                                                                  return renderLol = true;
-                                                                                });
-                                                                                Navigator.of(context).pop();
-                                                                              } else {
-                                                                                Toast.show("couldn't delete.", context, duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
-                                                                              }
-                                                                            },
-                                                                          ),
-                                                                        ],
-                                                                      );
-                                                                    });
-                                                              }
-                                                            },
-                                                            child: Container(
-                                                                padding: EdgeInsets
-                                                                    .symmetric(
-                                                                        vertical:
-                                                                            6),
-                                                                decoration: BoxDecoration(
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            10),
-                                                                    color: userService.userValue.id ==
-                                                                            m
-                                                                                .userId
-                                                                        ? Colors.blue[
-                                                                            100]
-                                                                        : Colors
-                                                                            .transparent),
-                                                                child: ListTile(
-                                                                  title: Text(
-                                                                      '${m.user.fName} ${m.user.lName} (${m.updatedAt.hour}:${m.updatedAt.minute})'),
-                                                                  subtitle: Text(
-                                                                      '${m.text}'),
-                                                                  leading:
-                                                                      CircleAvatar(
-                                                                    maxRadius:
-                                                                        40,
-                                                                    backgroundColor:
-                                                                        Color.fromARGB(
-                                                                            255,
-                                                                            235,
-                                                                            250,
-                                                                            253),
-                                                                    child: Text(
-                                                                      m.user
-                                                                          .fName
-                                                                          .substring(
-                                                                              0,
-                                                                              1)
-                                                                          .toUpperCase(),
+                          child: StreamBuilder(
+                              stream: groupService.message$,
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.active) {
+                                  print('hello frand');
+                                  print(groupService.willUpdate);
+                                  List<MessageModel> msg = snapshot.data;
+                                  return SingleChildScrollView(
+                                    child: Container(
+                                      child: Column(
+                                          children: msg.reversed
+                                              .map((m) => (GestureDetector(
+                                                  onLongPressEnd:
+                                                      (LongPressEndDetails
+                                                          details) {
+                                                    //open edit, delete option
+                                                    if (m.userId ==
+                                                        userService
+                                                            .userValue.id) {
+                                                      showDialog(
+                                                          context: context,
+                                                          builder: (context) {
+                                                            return AlertDialog(
+                                                              title: Text(
+                                                                  "Update msg",
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          18)),
+                                                              actions: <Widget>[
+                                                                OutlineButton(
+                                                                  child: new Text(
+                                                                      "Edit",
                                                                       style: TextStyle(
-                                                                          fontFamily:
-                                                                              'Ubuntu',
                                                                           fontSize:
-                                                                              35,
+                                                                              18,
                                                                           color:
-                                                                              Color(0xff2d386b)),
-                                                                    ),
-                                                                  ),
-                                                                )))))
-                                                    .toList()),
-                                          ),
-                                        );
-                                      }else{
-                                          return Center(child:CircularProgressIndicator());
-                                      }
+                                                                              Colors.green[300])),
+                                                                  onPressed:
+                                                                      () {
+                                                                    // edit here
+                                                                    message.text =
+                                                                        '${m.text}';
+                                                                    this.setState(
+                                                                        () {
+                                                                      postEditedText =
+                                                                          true;
+                                                                      editedId =
+                                                                          m.id;
+                                                                    });
+                                                                    Navigator.of(
+                                                                            context)
+                                                                        .pop();
+                                                                  },
+                                                                ),
+                                                                OutlineButton(
+                                                                  child: new Text(
+                                                                      "Delete",
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              18,
+                                                                          color:
+                                                                              Colors.red[300])),
+                                                                  onPressed:
+                                                                      () async {
+                                                                    //send delete request to server
+                                                                    http.Response
+                                                                        response =
+                                                                        await http.delete(
+                                                                            '$base_url/messages/${m.id}',
+                                                                            headers: {
+                                                                          "Authorization":
+                                                                              "Bearer ${getIt.get<UserService>().tokenValue}"
+                                                                        });
+                                                                    if (response
+                                                                            .statusCode ==
+                                                                        200) {
+                                                                      Toast.show(
+                                                                          "deleted successfully.",
+                                                                          context,
+                                                                          duration: Toast
+                                                                              .LENGTH_SHORT,
+                                                                          gravity:
+                                                                              Toast.BOTTOM);
+
+                                                                      this.setState(
+                                                                          () {
+                                                                        return renderLol =
+                                                                            true;
+                                                                      });
+                                                                      Navigator.of(
+                                                                              context)
+                                                                          .pop();
+                                                                    } else {
+                                                                      Toast.show(
+                                                                          "couldn't delete.",
+                                                                          context,
+                                                                          duration: Toast
+                                                                              .LENGTH_LONG,
+                                                                          gravity:
+                                                                              Toast.BOTTOM);
+                                                                    }
+                                                                  },
+                                                                ),
+                                                              ],
+                                                            );
+                                                          });
+                                                    }
+                                                  },
+                                                  child: Container(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              vertical: 6),
+                                                      decoration: BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(10),
+                                                          color: userService
+                                                                      .userValue
+                                                                      .id ==
+                                                                  m.userId
+                                                              ? Colors.blue[100]
+                                                              : Colors
+                                                                  .transparent),
+                                                      child: ListTile(
+                                                        title: Text(
+                                                            '${m.user.fName} ${m.user.lName} (${m.updatedAt.hour}:${m.updatedAt.minute})'),
+                                                        subtitle:
+                                                            Text('${m.text}'),
+                                                        leading: CircleAvatar(
+                                                          maxRadius: 40,
+                                                          backgroundColor:
+                                                              Color.fromARGB(
+                                                                  255,
+                                                                  235,
+                                                                  250,
+                                                                  253),
+                                                          child: Text(
+                                                            m.user.fName
+                                                                .substring(0, 1)
+                                                                .toUpperCase(),
+                                                            style: TextStyle(
+                                                                fontFamily:
+                                                                    'Ubuntu',
+                                                                fontSize: 35,
+                                                                color: Color(
+                                                                    0xff2d386b)),
+                                                          ),
+                                                        ),
+                                                      )))))
+                                              .toList()),
+                                    ),
+                                  );
+                                } else {
+                                  print('lolll');
+                                  return Center(
+                                      child: CircularProgressIndicator());
+                                }
                               })),
                     ),
                     Row(
@@ -308,8 +341,7 @@ class _GroupState extends State<Group> {
                               }
                             }
                             return Center(child: CircularProgressIndicator());
-                          }
-                          )
+                          })
                     ],
                   ),
                 ),
