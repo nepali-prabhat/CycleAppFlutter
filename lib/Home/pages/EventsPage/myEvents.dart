@@ -196,12 +196,12 @@ class _MyEventLayoutState extends State<MyEventLayout> {
                               }
                             },
                             child: Text('Group')),
-                        widget.isMine
-                            ? RaisedButton(
-                                color: Colors.green[200],
-                                onPressed: () {},
-                                child: Text('Update'))
-                            : SizedBox(),
+                        // widget.isMine
+                        //     ? RaisedButton(
+                        //         color: Colors.green[200],
+                        //         onPressed: () {},
+                        //         child: Text('Update'))
+                        //     : SizedBox(),
                         widget.isMine
                             ? RaisedButton(
                                 color: Colors.red[200],

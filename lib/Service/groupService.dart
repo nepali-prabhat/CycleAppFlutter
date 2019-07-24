@@ -71,6 +71,10 @@ class GroupService {
     } else {}
   }
 
+  void resetMessage() {
+    _message.add([]);
+  }
+
   _addParticipant() {
     List<UserModel> tempParticipants;
     event.participants.forEach((participant) {

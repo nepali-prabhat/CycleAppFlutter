@@ -35,16 +35,8 @@ class _GroupState extends State<Group> {
   }
 
   void dispose() {
+    groupService.resetMessage();
     groupService.setWillUpdate(false);
-  }
-
-  //get messages of group
-  Future<http.Response> getMessages() async {
-    http.Response response = await http
-        .get('$base_url/messages/${widget.group.id}', headers: {
-      "Authorization": "Bearer ${getIt.get<UserService>().tokenValue}"
-    });
-    return response;
   }
 
   void postMessage() async {
@@ -128,7 +120,7 @@ class _GroupState extends State<Group> {
                                   return SingleChildScrollView(
                                     child: Container(
                                       child: Column(
-                                          children: msg.reversed
+                                          children: msg
                                               .map((m) => (GestureDetector(
                                                   onLongPressEnd:
                                                       (LongPressEndDetails

@@ -31,13 +31,14 @@ class _LayoutState extends State<Layout> with SingleTickerProviderStateMixin {
   UserService userService = getIt.get<UserService>();
   LocationService locationService = getIt.get<LocationService>();
   MapService mapService = getIt.get<MapService>();
-  int activeIndex = 1;
+  int activeIndex = 0;
   bool showSettings;
-  changeActiveIndex(int i){
-      setState((){
-          activeIndex = i;
-      });
+  changeActiveIndex(int i) {
+    setState(() {
+      activeIndex = i;
+    });
   }
+
   @override
   void initState() {
     super.initState();
@@ -134,7 +135,7 @@ class _LayoutState extends State<Layout> with SingleTickerProviderStateMixin {
                   padding: EdgeInsets.symmetric(horizontal: 20),
                   child: FlatButton(
                     onPressed: () {
-                        changeActiveIndex(0);
+                      changeActiveIndex(0);
                     },
                     child: Container(
                         padding: EdgeInsets.all(10),
@@ -157,7 +158,7 @@ class _LayoutState extends State<Layout> with SingleTickerProviderStateMixin {
                   padding: EdgeInsets.symmetric(horizontal: 20),
                   child: FlatButton(
                     onPressed: () {
-                         changeActiveIndex(1);
+                      changeActiveIndex(1);
                     },
                     child: Container(
                         padding: EdgeInsets.all(10),
@@ -214,18 +215,17 @@ class _LayoutState extends State<Layout> with SingleTickerProviderStateMixin {
       ],
     );
   }
- Widget getPagesBasedOnIndex(){
-     if(activeIndex==0){
-         return MapPage(
-                    toggleCollapse: toggleCollapse,
-                    collapsedState: _isCollapsed);
-     }
-     else{
-         return EventPage(
-                toggleCollapse: toggleCollapse,
-                collapsedState: _isCollapsed);
-     }
- }
+
+  Widget getPagesBasedOnIndex() {
+    if (activeIndex == 0) {
+      return MapPage(
+          toggleCollapse: toggleCollapse, collapsedState: _isCollapsed);
+    } else {
+      return EventPage(
+          toggleCollapse: toggleCollapse, collapsedState: _isCollapsed);
+    }
+  }
+
   Widget home(context) {
     Size size = MediaQuery.of(context).size;
     screenheight = size.height;
@@ -242,9 +242,7 @@ class _LayoutState extends State<Layout> with SingleTickerProviderStateMixin {
           elevation: 20.0,
           color: backColor,
           child: Scaffold(
-            body: Container(
-              child: getPagesBasedOnIndex()
-            ),
+            body: Container(child: getPagesBasedOnIndex()),
           ),
         ));
   }
@@ -328,8 +326,9 @@ class _SettingsState extends State<Settings> {
                                         color: Colors.red[300]))),
                           ],
                         ),
-                        
-                        SizedBox(height: 30),SectionRuler(
+
+                        SizedBox(height: 30),
+                        SectionRuler(
                             section: "Change permissions.",
                             color: Colors.black45),
                         SizedBox(height: 30),
@@ -532,7 +531,6 @@ class _SettingsState extends State<Settings> {
                                           fontSize: 20))),
                             )),
                         SizedBox(height: 30),
-                        
                       ],
                     ))
                 : ChangeProfile(

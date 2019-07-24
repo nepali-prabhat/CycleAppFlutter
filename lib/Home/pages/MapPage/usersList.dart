@@ -2,6 +2,12 @@ import 'package:cycle_app/Model/NearbyUsers.dart';
 import 'package:cycle_app/Service/mapService.dart';
 import 'package:cycle_app/main.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart' as UrlLauncher;
+import 'package:http/http.dart' as http;
+import 'package:cycle_app/Service/userService.dart';
+import '../../../globals.dart';
+import 'dart:convert';
+import 'dart:async';
 
 class NearByUsersList extends StatelessWidget {
   final MapService mapService = getIt.get<MapService>();
@@ -102,11 +108,53 @@ class NearbyUsersListTile extends StatelessWidget {
       smallBio = smallBio + " ...";
       bio = smallBio;
     }
+    Future<String> getPhoneNumber() async {
+      UserService userService = getIt.get<UserService>();
+      http.Response response = await http.get(
+          '$base_url/users/getUser/${nearby.user.username}',
+          headers: {"Authorization": "Bearer " + userService.tokenValue});
+      var res = json.decode(response.body);
+      return res["phone_no"];
+    }
+
     String leadingNum = "${number + 1 < 10 ? "0" : ""}${number + 1}";
     return GestureDetector(
-        onTap:(){
-            print(nearby.user.username);
-        },
+      onTap: () {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            // return object of type Dialog
+            return FutureBuilder(
+                future: getPhoneNumber(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    var phone = snapshot.data;
+                    return AlertDialog(
+                      title: new Text("You can call!"),
+                      content: new Text(""),
+                      actions: <Widget>[
+                        // usually buttons at the bottom of the dialog
+                        new FlatButton(
+                          child: new Text("Close"),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        new FlatButton(
+                          child: new Text("Phone"),
+                          onPressed: () {
+                            UrlLauncher.launch("tel:+977 $phone");
+                          },
+                        ),
+                      ],
+                    );
+                  } else {
+                    return CircularProgressIndicator();
+                  }
+                });
+          },
+        );
+      },
       child: Container(
         margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
         child: Row(
